@@ -1,12 +1,16 @@
+using Domain;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Persistance;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +32,25 @@ namespace API
         {
 
             services.AddControllers();
+            var Identity = services.AddIdentity<AppUser,Role>(opt=>
+                {
+                    var PasswordManager = opt.Password;
+                    PasswordManager.RequireDigit = false;
+                    PasswordManager.RequireLowercase = false;
+                    PasswordManager.RequireNonAlphanumeric = false;
+                    PasswordManager.RequireUppercase = false;
+                }
+                );
+            var IdentityBuilder = new IdentityBuilder(Identity.UserType, typeof(Role), Identity.Services);
+            IdentityBuilder.AddEntityFrameworkStores<DataContext>();
+            IdentityBuilder.AddUserManager<UserManager<AppUser>>();
+            IdentityBuilder.AddSignInManager<SignInManager<AppUser>>();
+            IdentityBuilder.AddRoleValidator<RoleValidator<Role>>();
+            IdentityBuilder.AddRoleManager<RoleManager<Role>>();
+
+            services.AddDbContext<DataContext>(opt => {
+                opt.UseNpgsql(Configuration.GetConnectionString("Default"));
+            });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });

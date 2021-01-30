@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Persistance
 {
-    class DataContext:IdentityDbContext
+    public class DataContext:IdentityDbContext
     {
         public DataContext(DbContextOptions options) : base(options)
         { 
