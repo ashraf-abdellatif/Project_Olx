@@ -1,17 +1,20 @@
 ﻿using Domain;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Persistance
 {
-    public class DataContext:IdentityDbContext
+    public class DataContext:IdentityDbContext<AppUser , Role , string , IdentityUserClaim<string> , UserRoles , IdentityUserLogin<string> , IdentityRoleClaim<string> , IdentityUserToken<string>>
     {
         public DataContext(DbContextOptions options) : base(options)
         { 
+            
         }
+        public DbSet<UserRoles> UserRole { get; set; }
+        public DbSet<AppUser> AppUser { get; set; }
+        public DbSet<Role> Role { get; set; }
+
         protected override void OnModelCreating(ModelBuilder Builder)
         {
             base.OnModelCreating(Builder);
