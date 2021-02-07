@@ -1,4 +1,6 @@
+using Application.CQRS;
 using Domain;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -51,6 +53,7 @@ namespace API
             services.AddDbContext<DataContext>(opt => {
                 opt.UseNpgsql(Configuration.GetConnectionString("Default"));
             });
+            services.AddMediatR(typeof(ReadUsers.handler).Assembly);
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
